@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click the Moving Target Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Click the Moving Target Game</h1>
+        <p>Score: <span id="score">0</span></p>
+        <button id="start-btn">Start Game</button>
+        <div id="target"></div>
+        <p id="message"></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#game-container {
+    margin-top: 50px;
+}
+
+h1 {
+    color: #333;
+}
+
+#target {
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    display: none;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#message {
+    font-size: 20px;
+    margin-top: 30px;
+    color: green;
+}
+// Variables for game elements
+const startBtn = document.getElementById('start-btn');
+const scoreElem = document.getElementById('score');
+const targetElem = document.getElementById('target');
+const messageElem = document.getElementById('message');
+
+let score = 0;
+let gameInterval;
+let targetInterval;
+let gameActive = false;
+
+// Start game function
+function startGame() {
+    score = 0;
+    scoreElem.textContent = score;
+    messageElem.textContent = "";
+    gameActive = true;
+    targetElem.style.display = 'block'; // Show the target
+    startBtn.disabled = true;
+
+    // Start the moving target
+    targetInterval = setInterval(moveTarget, 1000);
+
+    // Stop the game after 30 seconds
+    gameInterval = setTimeout(endGame, 30000);
+}
+
+// Move the target randomly
+function moveTarget() {
+    if (!gameActive) return;
+
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 100);
+
+    targetElem.style.left = `${x}px`;
+    targetElem.style.top = `${y}px`;
+}
+
+// Click event for the target
+targetElem.addEventListener('click', function() {
+    if (!gameActive) return;
+
+    score++;
+    scoreElem.textContent = score;
+
+    // Move the target after click
+    moveTarget();
+});
+
+// End game function
+function endGame() {
+    gameActive = false;
+    targetElem.style.display = 'none'; // Hide the target
+    messageElem.textContent = `Game Over! Your final score is ${score}`;
+    startBtn.disabled = false;
+}
+
+// Restart the game
+startBtn.addEventListener('click', startGame);
